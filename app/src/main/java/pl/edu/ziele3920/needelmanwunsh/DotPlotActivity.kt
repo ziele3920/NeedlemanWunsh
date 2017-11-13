@@ -4,15 +4,16 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
 import android.view.Gravity
-import android.widget.TableLayout
 import android.widget.TableRow
-import kotlinx.android.synthetic.main.activity_insertion.*
+import kotlinx.android.synthetic.main.activity_dot_plot.*
 
 
 class DotPlotActivity : AppCompatActivity() {
 
     private var firstSeq: String = ""
     private var secondSeq: String = ""
+    private var dotPlotArray: Array<Array<String>>? = null
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,16 +21,23 @@ class DotPlotActivity : AppCompatActivity() {
         setContentView(R.layout.activity_dot_plot)
         firstSeq = intent.getStringExtra("firstSeq")
         secondSeq = intent.getStringExtra("secondSeq")
+        val nw: NeedelmanWunsh = NeedelmanWunsh(firstSeq, secondSeq);
+        val table: Array<Array<String>> = nw.getResultStringArray()
         drawTable()
     }
 
+
+
     fun drawTable() {
         var row = TableRow(this.applicationContext)
-        val tlayout = TableLayout(this.applicationContext)
+        val tlayout = tabLaay
+        val llayout = linearLayoutDot
 
         tlayout.gravity = Gravity.CENTER
-        tlayout.setBackgroundResource(R.color.background_material_dark)
+        llayout.gravity = Gravity.CENTER
 
+        tlayout.setBackgroundResource(R.color.background_material_dark)
+        llayout.setBackgroundResource(R.color.background_material_dark)
         row = TableRow(this)
 
         var text1 = TextView(this.applicationContext)
