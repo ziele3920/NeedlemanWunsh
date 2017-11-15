@@ -43,20 +43,35 @@ class DotPlotActivity : AppCompatActivity() {
         textColumn = Array(row.size, {Array(table[0].size, { TextView(this.applicationContext) })})
         for(r in 0.until(row.size)) {
             for (c in 0.until(textColumn[r].size)) {
-                textColumn[r][c].setText(table[r][c])
+                textColumn[r][c].text = " " + table[r][c] + " "
                 row[r].addView(textColumn[r][c])
             }
             tlayout.addView(row[r])
         }
+        var rowA = TableLayout(this.applicationContext)
+        var rowA0 = TableLayout(this.applicationContext)
         var rowA1 = TableLayout(this.applicationContext)
         var rowA2 = TableLayout(this.applicationContext)
+
+        var textA = TextView(this.applicationContext)
+        var textA0 = TextView(this.applicationContext)
         var textA1 = TextView(this.applicationContext)
         var textA2 = TextView(this.applicationContext)
+
         var alignments = nw.getAlignment()
+
+        textA.text = "Score " + nw.getScore().toString()
+        textA0.text = "Example alignment"
         textA1.setText(alignments[0])
         textA2.setText(alignments[1])
+
+        rowA.addView((textA))
+        rowA0.addView(textA0)
         rowA1.addView(textA1)
         rowA2.addView(textA2)
+
+        tlayout.addView(rowA)
+        tlayout.addView(rowA0)
         tlayout.addView(rowA1)
         tlayout.addView(rowA2)
     }

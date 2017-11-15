@@ -61,6 +61,7 @@ class NeedelmanWunsh(private val firstSeq: String, private val secondSeq: String
                 maxY = resultTable[0].size-1
             }
         }
+        score = max
         while(maxX > 0 || maxY > 0) {
             if (maxX > 0 && maxY > 0 && resultTable[maxX][maxY] == resultTable[maxX - 1][maxY - 1] + reward) {
                 resultSequences[0] = firstSeq[maxY-1] + resultSequences[0]
@@ -68,7 +69,7 @@ class NeedelmanWunsh(private val firstSeq: String, private val secondSeq: String
                 --maxX
                 --maxY
             }
-            else if (maxX > 0 && maxY > 0 && resultTable[maxX][maxY] == resultTable[maxX - 1][maxY - 1] + indelPunish) {
+            else if (maxX > 0 && maxY > 0 && resultTable[maxX][maxY] == resultTable[maxX - 1][maxY - 1] + mismatchDiagonalPunish && resultTable[maxX-1][maxY-1] >= Math.max(resultTable[maxX-1][maxY], resultTable[maxX][maxY-1]) ) {
                 resultSequences[0] = firstSeq[maxY-1] + resultSequences[0]
                 resultSequences[1] = secondSeq[maxX-1] + resultSequences[1]
                 --maxX
@@ -76,17 +77,16 @@ class NeedelmanWunsh(private val firstSeq: String, private val secondSeq: String
             }
 
             else if(maxX > 0 && resultTable[maxX][maxY] == resultTable[maxX-1][maxY] + indelPunish) {
-                resultSequences[0] = "- " + resultSequences[0]
+                resultSequences[0] = "_" + resultSequences[0]
                 resultSequences[1] = secondSeq[maxX-1] + resultSequences[1]
                 --maxX
             }
             else {
                 resultSequences[0] = firstSeq[maxY - 1] + resultSequences[0]
-                resultSequences[1] = "- " + resultSequences[1]
+                resultSequences[1] = "_" + resultSequences[1]
                 --maxY
             }
         }
-        score = max
     }
 
     private fun generateStringArray(resultTable: Array<IntArray>): Array<Array<String>> {
