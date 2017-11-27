@@ -3,7 +3,7 @@ package pl.edu.ziele3920.needelmanwunsh
 /**
  * Created by Zioło on 2017-11-13.
  */
-class NeedelmanWunsh(private val firstSeq: String, private val secondSeq: String) {
+class NeedelmanWunsh(private val horizontalSeq: String, private val vericalSeq: String) {
 
     private val reward: Int = 1
     private val indelPunish: Int = -1
@@ -13,17 +13,18 @@ class NeedelmanWunsh(private val firstSeq: String, private val secondSeq: String
     private var score: Int = 0
 
     fun getResultStringArray(): Array<Array<String>> {
-        resultTable = Array(secondSeq.length+1, {IntArray(firstSeq.length+1)})
+        resultTable = Array(vericalSeq.length+1, {IntArray(horizontalSeq.length+1)})
 
 
-        for (i in 0..secondSeq.length)
+        for (i in 0..vericalSeq.length)
             resultTable[i][0] = -i
 
-        for (i in 0..firstSeq.length)
+        for (i in 0..horizontalSeq.length)
             resultTable[0][i] = -i
-        for (i in 1..secondSeq.length) {
-            for (j in 1..firstSeq.length) {
-                if (secondSeq[i-1] == firstSeq[j-1])
+
+        for (i in 1..vericalSeq.length) {
+            for (j in 1..horizontalSeq.length) {
+                if (vericalSeq[i-1] == horizontalSeq[j-1])
                     resultTable[i][j] = resultTable[i - 1][j - 1] + reward
                 else
                     resultTable[i][j] = resultTable[i - 1][j - 1] + mismatchDiagonalPunish
@@ -64,25 +65,25 @@ class NeedelmanWunsh(private val firstSeq: String, private val secondSeq: String
         score = max
         while(maxX > 0 || maxY > 0) {
             if (maxX > 0 && maxY > 0 && resultTable[maxX][maxY] == resultTable[maxX - 1][maxY - 1] + reward) {
-                resultSequences[0] = firstSeq[maxY-1] + resultSequences[0]
-                resultSequences[1] = secondSeq[maxX-1] + resultSequences[1]
+                resultSequences[0] = horizontalSeq[maxY-1] + resultSequences[0]
+                resultSequences[1] = vericalSeq[maxX-1] + resultSequences[1]
                 --maxX
                 --maxY
             }
             else if (maxX > 0 && maxY > 0 && resultTable[maxX][maxY] == resultTable[maxX - 1][maxY - 1] + mismatchDiagonalPunish && resultTable[maxX-1][maxY-1] >= Math.max(resultTable[maxX-1][maxY], resultTable[maxX][maxY-1]) ) {
-                resultSequences[0] = firstSeq[maxY-1] + resultSequences[0]
-                resultSequences[1] = secondSeq[maxX-1] + resultSequences[1]
+                resultSequences[0] = horizontalSeq[maxY-1] + resultSequences[0]
+                resultSequences[1] = vericalSeq[maxX-1] + resultSequences[1]
                 --maxX
                 --maxY
             }
 
             else if(maxX > 0 && resultTable[maxX][maxY] == resultTable[maxX-1][maxY] + indelPunish) {
                 resultSequences[0] = "_" + resultSequences[0]
-                resultSequences[1] = secondSeq[maxX-1] + resultSequences[1]
+                resultSequences[1] = vericalSeq[maxX-1] + resultSequences[1]
                 --maxX
             }
             else {
-                resultSequences[0] = firstSeq[maxY - 1] + resultSequences[0]
+                resultSequences[0] = horizontalSeq[maxY - 1] + resultSequences[0]
                 resultSequences[1] = "_" + resultSequences[1]
                 --maxY
             }
@@ -90,13 +91,13 @@ class NeedelmanWunsh(private val firstSeq: String, private val secondSeq: String
     }
 
     private fun generateStringArray(resultTable: Array<IntArray>): Array<Array<String>> {
-        val stringArray: Array<Array<String>> = Array(secondSeq.length+2, { Array(firstSeq.length+2, {""})})
-        for(i in 0.until(secondSeq.length))
-            stringArray[i+2][0] = secondSeq[i].toString()
-        for(i in 0.until(firstSeq.length))
-            stringArray[0][i+2] = firstSeq[i].toString()
-        for (i in 1..secondSeq.length+1)
-            for (j in 1..firstSeq.length+1)
+        val stringArray: Array<Array<String>> = Array(vericalSeq.length+2, { Array(horizontalSeq.length+2, {""})})
+        for(i in 0.until(vericalSeq.length))
+            stringArray[i+2][0] = vericalSeq[i].toString()
+        for(i in 0.until(horizontalSeq.length))
+            stringArray[0][i+2] = horizontalSeq[i].toString()
+        for (i in 1..vericalSeq.length+1)
+            for (j in 1..horizontalSeq.length+1)
                 stringArray[i][j] = resultTable[i-1][j-1].toString()
         return stringArray
     }
