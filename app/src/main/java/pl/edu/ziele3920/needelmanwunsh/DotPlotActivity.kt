@@ -23,7 +23,10 @@ class DotPlotActivity : AppCompatActivity() {
         setContentView(R.layout.activity_dot_plot)
         firstSeq = intent.getStringExtra("firstSeq")
         secondSeq = intent.getStringExtra("secondSeq")
-        nw = NeedelmanWunsh(firstSeq, secondSeq);
+        val reward: Int? = intent.getStringExtra("reward").toIntOrNull()
+        val indelPunish: Int? = intent.getStringExtra("indelPunish").toIntOrNull()
+        val mismatchPunish: Int? = intent.getStringExtra("mismatchPunish").toIntOrNull()
+        nw = NeedelmanWunsh(firstSeq, secondSeq, reward, indelPunish, mismatchPunish);
         val table: Array<Array<String>> = nw.getResultStringArray()
         drawTable(table)
     }

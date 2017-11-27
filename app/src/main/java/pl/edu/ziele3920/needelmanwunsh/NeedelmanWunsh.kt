@@ -3,11 +3,27 @@ package pl.edu.ziele3920.needelmanwunsh
 /**
  * Created by Zioło on 2017-11-13.
  */
-class NeedelmanWunsh(private val horizontalSeq: String, private val vericalSeq: String) {
+class NeedelmanWunsh(
+        private val horizontalSeq: String,
+        private val vericalSeq: String,
+        reward: Int?,
+        indelPunish: Int?,
+        mismatchDiagonalPunish: Int?) {
 
-    private val reward: Int = 1
-    private val indelPunish: Int = -1
-    private val mismatchDiagonalPunish: Int = 0
+    private val reward: Int
+    private val defaultReward: Int = 1
+    private val indelPunish: Int
+    private val defaultIndelPunish: Int = -1
+    private val mismatchDiagonalPunish: Int
+    private val defaultMismatchDiagonalPunish = 0
+
+    init {
+        this.reward = reward ?: this.defaultReward
+        this.indelPunish = indelPunish ?: this.defaultIndelPunish
+        this.mismatchDiagonalPunish = mismatchDiagonalPunish ?: this.defaultMismatchDiagonalPunish
+    }
+
+
     private lateinit var resultTable: Array<IntArray>
     private lateinit var resultSequences: Array<String>
     private var score: Int = 0

@@ -15,6 +15,9 @@ class InsertionActivity : AppCompatActivity() {
             val intent = Intent(this, DotPlotActivity::class.java)
             intent.putExtra("firstSeq", editTextFiirstSeq.text.toString() )
             intent.putExtra("secondSeq", editTextSecondSeq.text.toString())
+            intent.putExtra("reward",  editTextReward.text.toString())
+            intent.putExtra("indelPunish", editTextIndelPunish.text.toString())
+            intent.putExtra("mismatchPunish", editTextMismatchPunish.text.toString())
             startActivity(intent)
         }
     }
