@@ -24,7 +24,6 @@ class NeedelmanWunsh(
     }
 
     private lateinit var resultTable: Array<IntArray>
-    private lateinit var resultSequences: Array<String>
     private lateinit var paths: Array<Array<MutableList<Pair<Pair<Int, Int>, Pair<String, String>>>>>
     private lateinit var alignments: MutableList<Pair<String, String>>
     private var score: Int = 0
@@ -52,10 +51,7 @@ class NeedelmanWunsh(
                 val horizontalPathScore = resultTable[i][j - 1] + indelPunish
                 val max = Math.max(diagonalPathScore, Math.max(verticalPathScore, horizontalPathScore))
                 resultTable[i][j] = max
-                var d =7
-                val c = 4
-                if(max == 3)
-                    d +=c
+
                 if(diagonalPathScore == max)
                     paths[i][j].add(Pair(Pair(i-1, j-1), Pair(vericalSeq[i-1].toString(), horizontalSeq[j-1].toString())))
                 if(verticalPathScore == max)
@@ -64,12 +60,12 @@ class NeedelmanWunsh(
                     paths[i][j].add(Pair(Pair(i, j-1), Pair("_", horizontalSeq[j-1].toString())))
             }
         }
-        calculateResults()
+        generateAlignments()
         return generateStringArray(resultTable)
     }
 
-    fun getAlignment(): Array<String>{
-        return resultSequences
+    fun getAlignment(): MutableList<Pair<String, String>>{
+        return alignments
     }
 
     fun getScore(): Int{
@@ -103,61 +99,14 @@ class NeedelmanWunsh(
     }
 
     private fun stepPath(horizontalStringAlignment: StringBuilder, verticalStringAlignment: StringBuilder, destinationCoords: Pair<Int, Int>) {
-        horizontalStringAlignment.append(horizontalSeq[destinationCoords.second-1])
-        verticalStringAlignment.append(vericalSeq[destinationCoords.first-1])
         if(paths[destinationCoords.first][destinationCoords.second].size == 0) {
-            alignments.add(Pair(horizontalStringAlignment.toString(), verticalStringAlignment.toString()))
+            alignments.add(Pair(horizontalStringAlignment.reverse().toString(), verticalStringAlignment.reverse().toString()))
             return
         }
-        //for(stepCoord in paths[destinationCoords.first][destinationCoords.second]) {
-        //    if(horizontalSeq[sourceCoords.second-1] == )
-        //}
-    }
-
-    private fun calculateResults() {
-        resultSequences = Array(2, {""})
-        var max = Int.MIN_VALUE
-        var maxX = 0
-        var maxY = 0
-        for(i in 0..resultTable[0].size-1) {
-            if (resultTable[resultTable.size - 1][i] >= max) {
-                max = resultTable[resultTable.size - 1][i]
-                maxX = resultTable.size - 1
-                maxY = i
-            }
-        }
-        for(i in 0..resultTable.size-1) {
-            if (resultTable[i][resultTable[0].size-1] >= max) {
-                max = resultTable[i][resultTable[0].size-1]
-                maxX = i
-                maxY = resultTable[0].size-1
-            }
-        }
-        score = max
-        while(maxX > 0 || maxY > 0) {
-            if (maxX > 0 && maxY > 0 && resultTable[maxX][maxY] == resultTable[maxX - 1][maxY - 1] + reward) {
-                resultSequences[0] = horizontalSeq[maxY-1] + resultSequences[0]
-                resultSequences[1] = vericalSeq[maxX-1] + resultSequences[1]
-                --maxX
-                --maxY
-            }
-            else if (maxX > 0 && maxY > 0 && resultTable[maxX][maxY] == resultTable[maxX - 1][maxY - 1] + mismatchDiagonalPunish && resultTable[maxX-1][maxY-1] >= Math.max(resultTable[maxX-1][maxY], resultTable[maxX][maxY-1]) ) {
-                resultSequences[0] = horizontalSeq[maxY-1] + resultSequences[0]
-                resultSequences[1] = vericalSeq[maxX-1] + resultSequences[1]
-                --maxX
-                --maxY
-            }
-
-            else if(maxX > 0 && resultTable[maxX][maxY] == resultTable[maxX-1][maxY] + indelPunish) {
-                resultSequences[0] = "_" + resultSequences[0]
-                resultSequences[1] = vericalSeq[maxX-1] + resultSequences[1]
-                --maxX
-            }
-            else {
-                resultSequences[0] = horizontalSeq[maxY - 1] + resultSequences[0]
-                resultSequences[1] = "_" + resultSequences[1]
-                --maxY
-            }
+        for(stepCoord in paths[destinationCoords.first][destinationCoords.second]) {
+            var verticalPathAlignemnt = StringBuilder(verticalStringAlignment).append(stepCoord.second.first)
+            var horizontalPathAlignment = StringBuilder(horizontalStringAlignment).append(stepCoord.second.second)
+            stepPath(horizontalPathAlignment, verticalPathAlignemnt, stepCoord.first)
         }
     }
 
