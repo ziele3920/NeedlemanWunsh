@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
 import android.view.Gravity
+import android.widget.ArrayAdapter
 import android.widget.TableLayout
 import android.widget.TableRow
 import kotlinx.android.synthetic.main.activity_dot_plot.*
@@ -51,31 +52,15 @@ class DotPlotActivity : AppCompatActivity() {
             }
             tlayout.addView(row[r])
         }
-        var rowA = TableLayout(this.applicationContext)
-        var rowA0 = TableLayout(this.applicationContext)
-        var rowA1 = TableLayout(this.applicationContext)
-        var rowA2 = TableLayout(this.applicationContext)
 
-        var textA = TextView(this.applicationContext)
-        var textA0 = TextView(this.applicationContext)
-        var textA1 = TextView(this.applicationContext)
-        var textA2 = TextView(this.applicationContext)
 
         var alignments = nw.getAlignment()
+        var textAlignments =  ArrayList<String>()
 
-        textA.text = "Score " + nw.getScore().toString()
-        textA0.text = "Example alignment"
-        textA1.setText(alignments[0])
-        textA2.setText(alignments[1])
+        alignments.mapTo(textAlignments) { it.first + "\n" + it.second + "   Score " + it.third}
 
-        rowA.addView((textA))
-        rowA0.addView(textA0)
-        rowA1.addView(textA1)
-        rowA2.addView(textA2)
+        val adapter = ArrayAdapter(applicationContext, android.R.layout.simple_list_item_1 , textAlignments)
+        listViewAlignments.adapter = adapter
 
-        tlayout.addView(rowA)
-        tlayout.addView(rowA0)
-        tlayout.addView(rowA1)
-        tlayout.addView(rowA2)
     }
 }

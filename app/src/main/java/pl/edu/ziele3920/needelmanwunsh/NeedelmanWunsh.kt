@@ -25,8 +25,7 @@ class NeedelmanWunsh(
 
     private lateinit var resultTable: Array<IntArray>
     private lateinit var paths: Array<Array<MutableList<Pair<Pair<Int, Int>, Pair<String, String>>>>>
-    private lateinit var alignments: MutableList<Pair<String, String>>
-    private var score: Int = 0
+    private lateinit var alignments: MutableList<Triple<String, String, Int>>
 
     fun getResultStringArray(): Array<Array<String>> {
         resultTable = Array(vericalSeq.length+1, {IntArray(horizontalSeq.length+1)})
@@ -35,13 +34,13 @@ class NeedelmanWunsh(
         for (i in 0..vericalSeq.length) {
             resultTable[i][0] = -i
             if(i > 0)
-                paths[i][0].add(Pair(Pair(i-1, 0), Pair("", "")))
+                paths[i][0].add(Pair(Pair(i-1, 0), Pair(vericalSeq[i-1].toString(), "_")))
         }
 
         for (i in 0..horizontalSeq.length) {
             resultTable[0][i] = -i
             if(i > 0)
-                paths[i][0].add(Pair(Pair(0, i-1), Pair("", "")))
+                paths[0][i].add(Pair(Pair(0, i-1), Pair("_", horizontalSeq[i-1].toString())))
         }
 
         for (i in 1..vericalSeq.length) {
@@ -64,11 +63,20 @@ class NeedelmanWunsh(
         return generateStringArray(resultTable)
     }
 
-    fun getAlignment(): MutableList<Pair<String, String>>{
+    fun getAlignment(): MutableList<Triple<String, String, Int>>{
         return alignments
     }
 
-    fun getScore(): Int{
+    private fun getScore(seq1: String, seq2: String): Int{
+        var score = 0
+        for(i in 0 until seq1.length) {
+            if(seq1[i] == '_' || seq2[i] == '_')
+                score += indelPunish
+            else if(seq1[i] == seq2[i])
+                score += reward
+            else
+                score += mismatchDiagonalPunish
+        }
         return score
     }
 
@@ -100,7 +108,9 @@ class NeedelmanWunsh(
 
     private fun stepPath(horizontalStringAlignment: StringBuilder, verticalStringAlignment: StringBuilder, destinationCoords: Pair<Int, Int>) {
         if(paths[destinationCoords.first][destinationCoords.second].size == 0) {
-            alignments.add(Pair(horizontalStringAlignment.reverse().toString(), verticalStringAlignment.reverse().toString()))
+            val horizontalSeq = horizontalStringAlignment.reverse().toString()
+            val verticalSeq = verticalStringAlignment.reverse().toString()
+            alignments.add(Triple(horizontalSeq, verticalSeq, getScore(horizontalSeq, verticalSeq)))
             return
         }
         for(stepCoord in paths[destinationCoords.first][destinationCoords.second]) {
